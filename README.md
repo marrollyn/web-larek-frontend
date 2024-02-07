@@ -77,7 +77,63 @@ yarn build
 ### Класс LarekApi
 Класс наследуются от класса ```Api``` для получения и отправки данных с api проекта
 
+## Типизация базовых компонентов
+```interface IEvents``` предоставлен в старотовом пакете
 
+```
+interface IEvents {
+    on<T extends object>(event: EventName, callback: (data: T) => void): void;
+    emit<T extends object>(event: string, data?: T): void;
+    trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
+}
 
+interface IFormState {
+    valid: boolean;
+    errors: string[];
+}
 
+interface IPage {
+    counter: number;
+    catalog: HTMLElement[];
+    locked: boolean;
+}
 
+// интерфейс описания карточки товара
+interface ICard<T> {
+    id: string;
+    description: string | string[];
+    image: string;
+    title: string;
+    category: string;
+    price: number | null;
+}
+
+// интерфейс описания товара
+interface IProductItem<T> {
+    id: string;
+    description: string | string[];
+    image: string;
+    title: string;
+    category: string;
+    price: number | null;
+}
+
+interface IModalData {
+    content: HTMLElement;
+}
+
+// интерфейс описания формы заказа
+interface IOrderForm {
+    email: string;
+    phone: string;
+    payment: string;
+}
+
+interface IAppState {
+    catalog: IProductItem[];
+    basket: string[];
+    preview: string | null;
+    order: IOrder | null;
+    loading: boolean;
+}
+```
