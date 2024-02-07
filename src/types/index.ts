@@ -20,9 +20,9 @@ export interface ICard<T> {
 }
 
 // интерфейс описания товара
-export interface IProductItem<T> {
+export interface IProductItem {
     id: string;
-    description: string | string[];
+    description: string;
     image: string;
     title: string;
     category: string;
@@ -40,10 +40,36 @@ export interface IOrderForm {
     payment: string;
 }
 
+export interface IOrder { 
+    email: string; 
+    phone: string; 
+    payment: string; 
+} 
+
+export interface IOrder extends IOrderForm {
+    items: string[]
+}
 export interface IAppState {
     catalog: IProductItem[];
     basket: string[];
     preview: string | null;
     order: IOrder | null;
     loading: boolean;
+}
+
+export interface ILarekApi {
+    getProductList: () => Promise<IProductItem[]>;
+    getProductItem: (id: string) => Promise<IProductItem>;
+    orderProducts: (order: IOrder) => Promise<IOrderResult>;
+}
+
+export interface IOrderResult {
+    id: string;
+    total: number;
+}
+
+interface IBasketView {
+    items: HTMLElement[];
+    total: number;
+    selected: string[];
 }
