@@ -68,8 +68,16 @@ export interface IOrderResult {
     total: number;
 }
 
-interface IBasketView {
+export interface IBasketView {
     items: HTMLElement[];
     total: number;
     selected: string[];
+}
+
+export interface ISuccess {
+    total: number;
+}
+
+export interface ISuccessActions {
+    onClick: () => void;
 }
