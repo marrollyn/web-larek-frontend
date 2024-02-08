@@ -53,7 +53,7 @@ yarn build
 ```protected constructor(protected readonly container: HTMLElement)```.
 Класс имеет методы:
 - ```toggleClass(element: HTMLElement, className: string, force?: boolean)``` - метод переключения класса
--     ```setDisabled(element: HTMLElement, state: boolean)``` - метод смены состояние ```disabled```
+- ```setDisabled(element: HTMLElement, state: boolean)``` - метод смены состояние ```disabled```
 - ```protected setHidden(element: HTMLElement)``` - метод для отображения элемента
 - ```protected setVisible(element: HTMLElement)``` - метод для скрытия отображения элемента
 - ```protected setImage(element: HTMLImageElement, src: string, alt?: string)``` - метод для установки изображения с альтернативным текстом
