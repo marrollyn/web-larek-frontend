@@ -81,3 +81,5 @@ export interface ISuccess {
 export interface ISuccessActions {
     onClick: () => void;
 }
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
