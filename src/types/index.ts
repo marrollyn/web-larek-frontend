@@ -11,8 +11,8 @@ export interface IPage {
 
 // интерфейс описания карточки товара
 export interface ICard<T> {
-    id: string;
-    description: string | string[];
+    //id: string;
+    //description: string | string[];
     image: string;
     title: string;
     category: string;
@@ -43,11 +43,14 @@ export interface IOrderForm {
 export interface IOrder { 
     email: string; 
     phone: string; 
-    payment: string; 
+    payment: string;
+    adress: string;
+    total: number;
+    items: []; 
 } 
 
 export interface IOrder extends IOrderForm {
-    items: string[]
+    items: [] //string[]
 }
 export interface IAppState {
     catalog: IProductItem[];
