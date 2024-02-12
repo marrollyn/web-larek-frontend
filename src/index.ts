@@ -6,7 +6,7 @@ import {EventEmitter} from "./components/base/events";
 import {AppState, CatalogChangeEvent, ProductItem} from "./components/AppData";
 import {Page} from "./components/Page";
 //import {Auction, AuctionItem, BidItem, CatalogItem, Card} from "./components/Card";
-import {Card} from "./components/Card";
+import {Card, CardProduct} from "./components/Card";
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import {Basket} from "./components/common/Basket";
@@ -26,7 +26,7 @@ events.onAll(({ eventName, data }) => {
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 //const auctionTemplate = ensureElement<HTMLTemplateElement>('#auction');
-const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#bid');
+//const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#bid');
 //const bidsTemplate = ensureElement<HTMLTemplateElement>('#bids');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 //const tabsTemplate = ensureElement<HTMLTemplateElement>('#tabs');
@@ -133,7 +133,7 @@ events.on('order:open', () => {
 //     });
 // });
 
-// Открыть закрытые лоты
+// Открыть корзину
 events.on('basket:open', () => {
     modal.render({
         content: createElement<HTMLElement>('div', {}, [
@@ -184,47 +184,41 @@ events.on('basket:open', () => {
 //     basket.total = total;
 // })
 
-// Открыть лот
-events.on('card:select', (item: ProductItem) => {
-    appData.setPreview(item);
-});
-
-// Изменен открытый выбранный лот
-// events.on('preview:changed', (item: ProductItem) => {
-//     const showItem = (item: ProductItem) => {
-//         const card = new ProductItem (cloneTemplate(cardPreviewTemplate));
-//         const auction = new Auction(cloneTemplate(auctionTemplate), {
-//             onSubmit: (price) => {
-//                 item.placeBid(price);
-//                 auction.render({
-//                     status: item.status,
-//                     time: item.timeStatus,
-//                     label: item.auctionStatus,
-//                     nextBid: item.nextBid,
-//                     history: item.history
-//                 });
-//             }
-//         });
-
-//         modal.render({
-//             content: card.render({
-//                 title: item.title,
-//                 image: item.image,
-//                 description: item.description.split("\n"),
-//                 status: auction.render({
-//                     status: item.status,
-//                     time: item.timeStatus,
-//                     label: item.auctionStatus,
-//                     nextBid: item.nextBid,
-//                     history: item.history
-//                 })
-//             })
-//         });
-
-//     };
-
-    
+// // Открыть лот
+// events.on('card:select', (item: ProductItem) => {
+//     appData.setPreview(item);
 // });
+
+//Открыть выбранный продукт
+events.on('preview:changed', (item: ProductItem) => {
+    const showItem = new CardProduct('card', cloneTemplate(cardPreviewTemplate), {
+        onClick: () => {
+            events.emit('basket:changed', item);
+            //item.button.setText('В корзине');
+            // modal.render({
+            //     content: showItem.render({
+            //         title: item.title,
+            //         image: item.image,
+            //         category: item.category,
+            //         price: item.price,
+            //         description: item.description,
+            //         id: item.id,
+            //     }), 
+            // });
+        }
+    });
+
+    modal.render({
+        content: showItem.render({
+            title: item.title,
+            image: item.image,
+            category: item.category,
+            price: item.price,
+            description: item.description,
+            id: item.id,
+        })
+    });
+});
 
 
 // Блокируем прокрутку страницы если открыта модалка
@@ -244,4 +238,50 @@ api.getProductList()
         console.error(err);
     });
 
+// Изменения в корзине
+events.on('basket:changed', () => {
+    console.log('basket:changed')
+    basket.items
+    // modal.render({
+    //     content: showItem.render({
+    //         showItem.set.sold
+    //     })
+    // });
+})
+//     page.counter = appData.getClosedLots().length;
+//     bids.items = appData.getActiveLots().map(item => {
+//         const card = new BidItem(cloneTemplate(cardBasketTemplate), {
+//             onClick: () => events.emit('preview:changed', item)
+//         });
+//         return card.render({
+//             title: item.title,
+//             image: item.image,
+//             status: {
+//                 amount: item.price,
+//                 status: item.isMyBid
+//             }
+//         });
+//     });
+//     let total = 0;
+//     basket.items = appData.getClosedLots().map(item => {
+//         const card = new BidItem(cloneTemplate(soldTemplate), {
+//             onClick: (event) => {
+//                 const checkbox = event.target as HTMLInputElement;
+//                 appData.toggleOrderedLot(item.id, checkbox.checked);
+//                 basket.total = appData.getTotal();
+//                 basket.selected = appData.order.items;
+//             }
+//         });
+//         return card.render({
+//             title: item.title,
+//             image: item.image,
+//             status: {
+//                 amount: item.price,
+//                 status: item.isMyBid
+//             }
+//         });
+//     });
+//     basket.selected = appData.order.items;
+//     basket.total = total;
+// })
 

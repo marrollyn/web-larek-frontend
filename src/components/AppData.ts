@@ -3,9 +3,6 @@ import {FormErrors, IAppState, IProductItem, IOrder, IOrderForm} from "../types"
 import {EventEmitter, IEvents} from "../components/base/events";
 import {Model} from "./base/Model";
 
-export type CatalogChangeEvent = {
-    catalog: ProductItem[]
-};
 
 export class ProductItem extends Model<IProductItem> {
     id: string;
@@ -15,6 +12,10 @@ export class ProductItem extends Model<IProductItem> {
     category: string;
     price: number | null;
 }
+
+export type CatalogChangeEvent = {
+    catalog: ProductItem[]
+};
 
 export class AppState extends Model<IAppState>{
     basket: string[];
@@ -90,5 +91,4 @@ export class AppState extends Model<IAppState>{
         return Object.keys(errors).length === 0;
     }
 
-    
 }

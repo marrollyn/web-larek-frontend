@@ -11,8 +11,6 @@ export interface IPage {
 
 // интерфейс описания карточки товара
 export interface ICard<T> {
-    //id: string;
-    //description: string | string[];
     image: string;
     title: string;
     category: string;
