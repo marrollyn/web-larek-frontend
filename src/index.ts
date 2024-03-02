@@ -104,9 +104,9 @@ events.on('formErrors.secondStep:change', (errors: Partial<IOrderContactForm>) =
     orderSubmit.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
 });
 
-// events.on('order.payment:change', (data: { field: keyof IOrderForm, value: string }) => {
-//     appData.order.payment = data.value
-// })
+events.on('order.payment:change', (data: { field: keyof IOrderForm, value: string }) => {
+    appData.order.payment = data.value
+})
 
 // Изменилось одно из полей
 events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
