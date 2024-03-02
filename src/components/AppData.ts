@@ -56,7 +56,6 @@ export class AppState extends Model<IAppState>{
             items: []
         }
     };
-    
 
     getTotal() {
         return this.order.items.reduce((a, c) => a + this.catalog.find(it => it.id === c).price, 0)
@@ -106,32 +105,18 @@ export class AppState extends Model<IAppState>{
 
     validateContactOrder() {
         const errors: typeof this.formErrors = {};
-        //const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        //const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
+
         if (!this.order.email) {
             errors.email = 'Необходимо указать email';}
-        // else if (!emailPattern.test(this.order.email)) {
-        //     errors.email = 'Неправильный адрес электронной почты';
-        // }
 
         if (!this.order.phone) {
             errors.phone = 'Необходимо указать телефон';
         } 
-        // else if (!phonePattern.test(this.order.phone)) {
-        //     errors.phone = 'Телефон должен быть +7(XXX)XXX-XX-XX';
-        // }
 
         this.formErrors = errors;
         this.events.emit('formErrors.secondStep:change', this.formErrors);
         return Object.keys(errors).length === 0;
     }
-
-    // isValidValue(fieldName: keyof IOrderForm, value:string) {
-    //     if(fieldName === 'email') {
-    //         // value.test(/@./)
-    //         return true
-    //     }
-    // }
 
     getProduct(): IProductItem[] {
         return this.catalog

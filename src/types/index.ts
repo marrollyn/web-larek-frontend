@@ -51,9 +51,10 @@ export interface IOrder {
     items: string[]; 
 } 
 
-export interface IOrder extends IOrderForm {
-    items: string[]
-}
+// export interface IOrder extends IOrderForm {
+//     items: string[]
+// }
+
 export interface IAppState {
     catalog: IProductItem[];
     basket: string[];

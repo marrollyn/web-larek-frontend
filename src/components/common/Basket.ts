@@ -3,11 +3,6 @@ import {cloneTemplate, createElement, ensureElement, formatNumber} from "../../u
 import {EventEmitter} from "../base/events";
 import { IBasketView } from "../../types";
 
-// interface IBasketView {
-//     items: HTMLElement[];
-//     total: number;
-//     selected: string[];
-// }
 
 export class Basket extends Component<IBasketView> {
     protected _list: HTMLElement;
@@ -41,14 +36,6 @@ export class Basket extends Component<IBasketView> {
             this.setDisabled(this._button, true);
         }
     }
-
-    // set selected(items: string[]) {
-    //     if (items.length) {
-    //         this.setDisabled(this._button, false);
-    //     } else {
-    //         this.setDisabled(this._button, true);
-    //     }
-    // }
 
     set total(total: number) {
         this.setText(this._total, formatNumber(total)  + ' синпсов');
