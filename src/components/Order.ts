@@ -22,15 +22,15 @@ export class Order extends Form<IOrderForm> {
     }
 
 
-    set phone(value: string) {
-        (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
-    }
+    // set phone(value: string) {
+    //     (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
+    // }
 
-    set email(value: string) {
-        (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
-    }
+    // set email(value: string) {
+    //     (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
+    // }
 
-    set payment (payment: string) {
-        this.payment = payment;
-    }
+    // set payment (payment: string) {
+    //     this.payment = payment;
+    // }
 }

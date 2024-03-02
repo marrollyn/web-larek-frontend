@@ -111,10 +111,13 @@ events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }
 
 // Открыть форму заказа
 events.on('order:open', () => {
+    appData.order.total = appData.getTotal();
     modal.render({
         content: order.render({
-            phone: '',
+            //payment: null,
+            //adress: '',
             email: '',
+            phone: '',
             valid: false,
             errors: []
         })
@@ -320,3 +323,4 @@ events.on('item:delete', (item: ProductItem) => {
         content: basket.render()
     });
 });
+
