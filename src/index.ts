@@ -46,7 +46,7 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 //const bids = new Basket(cloneTemplate(bidsTemplate), events);
-const orderSubmit = new OrderSubmit (cloneTemplate(orderSubmitTemplate), events);
+// const orderSubmit = new OrderSubmit (cloneTemplate(orderSubmitTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 // const tabs = new Tabs(cloneTemplate(tabsTemplate), {
 //     onClick: (name) => {
@@ -55,7 +55,7 @@ const basket = new Basket(cloneTemplate(basketTemplate), events);
 //     }
 // });
 const order = new Order(cloneTemplate(orderTemplate), events);
-// const contacts = new OrderSubmit(cloneTemplate(contactsTemplate), events)
+const contacts = new OrderSubmit(cloneTemplate(contactsTemplate), events)
 // Дальше идет бизнес-логика
 // Поймали событие, сделали что нужно
 
@@ -100,8 +100,8 @@ events.on('formErrors.firstStep:change', (errors: Partial<IOrderForm>) => {
 events.on('formErrors.secondStep:change', (errors: Partial<IOrderContactForm>) => {
     const { email, phone } = errors;
     console.log('errors: ',errors)
-    orderSubmit.valid = !email && !phone;
-    orderSubmit.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
+    contacts.valid = !email && !phone;
+    contacts.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
 });
 
 events.on('order.payment:change', (data: { field: keyof IOrderForm, value: string }) => {
@@ -112,7 +112,7 @@ events.on('order.payment:change', (data: { field: keyof IOrderForm, value: strin
 events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
     appData.setOrderField(data.field, data.value);
 });
-events.on(/^orderSubmit\..*:change/, (data: { field: keyof IOrderContactForm, value: string }) => {
+events.on(/^contacts\..*:change/, (data: { field: keyof IOrderContactForm, value: string }) => {
     appData.setContactsField(data.field, data.value);
 });
 
@@ -132,7 +132,7 @@ events.on('order:open', () => {
 
 events.on('order:submit', () => {
     modal.render({
-        content: orderSubmit.render({
+        content: contacts.render({
             email: '',
             phone: '',
             valid: false,
@@ -149,13 +149,17 @@ events.on('contacts:submit', () => {
             const success = new Success(cloneTemplate(successTemplate), {
                 onClick: () => {
                     modal.close();
+                    
                     appData.clearBasket();
+                    page.counter = 0;
                     events.emit('auction:changed');
                 }
             });
 
             modal.render({
-                content: success.render({})
+                content: success.render({
+                    total: result.total
+                })
             });
         })
         .catch(err => {
