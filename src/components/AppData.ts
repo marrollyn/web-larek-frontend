@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { formatNumber} from "../utils/utils";
 import {FormErrors, IAppState, IProductItem, IOrder, IOrderForm} from "../types";
 import {EventEmitter, IEvents} from "../components/base/events";
@@ -18,7 +19,7 @@ export type CatalogChangeEvent = {
 };
 
 export class AppState extends Model<IAppState>{
-    basket: string[];
+    basket: [];
     catalog: ProductItem[];
     loading: boolean;
     order: IOrder = {
@@ -33,13 +34,17 @@ export class AppState extends Model<IAppState>{
     formErrors: FormErrors = {};
 
 
-    // toggleOrderedLot(id: string, isIncluded: boolean) {
-    //     if (isIncluded) {
-    //         this.order.items = _.uniq([...this.order.items, id]);
-    //     } else {
-    //         this.order.items = _.without(this.order.items, id);
-    //     }
-    // }
+    toggleOrderedLot(id: string, isIncluded: boolean) {
+        if (isIncluded) {
+            this.order.items = _.uniq([...this.order.items, id]);
+        } else {
+            this.order.items = _.without(this.order.items, id);
+        }
+    }
+
+    getCount(): number {
+        return this.order.items.length;
+    }
 
     clearBasket() {
         this.order = {
@@ -89,6 +94,11 @@ export class AppState extends Model<IAppState>{
         this.formErrors = errors;
         this.events.emit('formErrors:change', this.formErrors);
         return Object.keys(errors).length === 0;
+    }
+
+    getProduct(): IProductItem[] {
+        return this.catalog
+            .filter(item => this.order.items.includes(item.id))
     }
 
 }

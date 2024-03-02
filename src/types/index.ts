@@ -15,6 +15,7 @@ export interface ICard<T> {
     title: string;
     category: string;
     price: number | null;
+    
 }
 
 // интерфейс описания товара
@@ -44,11 +45,11 @@ export interface IOrder {
     payment: string;
     adress: string;
     total: number;
-    items: []; 
+    items: string[]; 
 } 
 
 export interface IOrder extends IOrderForm {
-    items: [] //string[]
+    items: string[]
 }
 export interface IAppState {
     catalog: IProductItem[];
