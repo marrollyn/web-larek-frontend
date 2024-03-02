@@ -282,14 +282,17 @@ events.on('product:buy', (item: ProductItem) => {
 
 // Открыть корзину
 events.on('basket:open', () => {
+    let basketItemIndex:number = 0;
     basket.items = appData.getProduct().map(item => {
+        basketItemIndex = basketItemIndex + 1;
         const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
             onClick: () => events.emit('item:delete', item)
         });
+        
         return card.render({
             title: item.title,
             price: item.price,
-            //index:  index + 1,
+            index:  basketItemIndex,
         });
     })
     basket.total = appData.getTotal();
@@ -299,15 +302,17 @@ events.on('basket:open', () => {
 });
 
 events.on('item:delete', (item: ProductItem) => {
+    let basketItemIndex:number = 0;
     appData.toggleOrderedLot(item.id, false);
     basket.items = appData.getProduct().map(item => {
+        basketItemIndex = basketItemIndex + 1;
         const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
             onClick: () => events.emit('item:delete', item)
         });
         return card.render({
             title: item.title,
             price: item.price,
-            //index: index + 1,
+            index: basketItemIndex,
         });
     })
     basket.total = appData.getTotal();
