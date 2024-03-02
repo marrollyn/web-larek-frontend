@@ -21,6 +21,7 @@ export class Form<T> extends Component<IFormState> {
         this.container.addEventListener('input', (e: Event) => {
             const target = e.target as HTMLInputElement;
             const field = target.name as keyof T;
+            console.log('field:', field)
             const value = target.value;
             this.onInputChange(field, value);
         });
@@ -32,6 +33,7 @@ export class Form<T> extends Component<IFormState> {
     }
 
     protected onInputChange(field: keyof T, value: string) {
+        console.log('onInputEmitName', `${this.container.name}.${String(field)}:change`);
         this.events.emit(`${this.container.name}.${String(field)}:change`, {
             field,
             value

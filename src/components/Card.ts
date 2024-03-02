@@ -60,6 +60,21 @@ export class Card extends Component<IProductItem> {
 
     set category(value: string) {
         this.setText(this._category, value);
+        this._category.classList.add(`card__category_${this.setCategoryClass(value)}`)
+    }
+
+    setCategoryClass(value: string):string {
+        if(value === "софт-скил") {
+            return "soft"
+        } else if(value === "хард-скил") {
+            return "hard"
+        } else if(value === "кнопка") {
+            return "button"
+        } else if(value === "дополнительное") {
+            return "additional"
+        } else if(value === "другое") {
+            return "other"
+        }
     }
 
     get category(): string {

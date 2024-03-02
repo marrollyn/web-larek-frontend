@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { formatNumber} from "../utils/utils";
-import {FormErrors, IAppState, IProductItem, IOrder, IOrderForm} from "../types";
+import {FormErrors, IAppState, IProductItem, IOrder, IOrderForm,IOrderContactForm} from "../types";
 import {EventEmitter, IEvents} from "../components/base/events";
 import {Model} from "./base/Model";
 
@@ -26,7 +26,7 @@ export class AppState extends Model<IAppState>{
         email: '', 
         phone: '',
         payment: '',
-        adress: '',
+        address: '',
         total: 0,
         items: [] 
     } ;
@@ -51,7 +51,7 @@ export class AppState extends Model<IAppState>{
             email: '', 
             phone: '',
             payment: '',
-            adress: '',
+            address: '',
             total: 0,
             items: []
         }
@@ -80,21 +80,57 @@ export class AppState extends Model<IAppState>{
         }
     }
 
+    setContactsField(field: keyof IOrderContactForm, value: string) {
+        this.order[field] = value;
+
+        if (this.validateContactOrder()) {
+            this.events.emit('orderContact:ready', this.order);
+        }
+    }
+
     validateOrder() {
         const errors: typeof this.formErrors = {};
-        if (!this.order.email) {
-            errors.email = 'Необходимо указать email';
+
+        if (!this.order.address) {
+            errors.address = 'Необходимо указать адрес';
         }
-        if (!this.order.phone) {
-            errors.phone = 'Необходимо указать телефон';
+        if (!this.order.payment) {
+            errors.payment = 'Необходимо указать тип оплаты';
         }
-        if (!this.order.adress) {
-            errors.phone = 'Необходимо указать адрес';
-        }
+
         this.formErrors = errors;
-        this.events.emit('formErrors:change', this.formErrors);
+        this.events.emit('formErrors.firstStep:change', this.formErrors);
+
         return Object.keys(errors).length === 0;
     }
+
+    validateContactOrder() {
+        const errors: typeof this.formErrors = {};
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
+        if (!this.order.email) {
+            errors.email = 'Необходимо указать email';
+        }else if (!emailPattern.test(this.order.email)) {
+            errors.email = 'Неправильный адрес электронной почты';
+        }
+
+        if (!this.order.phone) {
+            errors.phone = 'Необходимо указать телефон';
+        } else if (!phonePattern.test(this.order.phone)) {
+            errors.phone = 'Телефон должен быть +7(XXX)XXX-XX-XX';
+        }
+
+        this.formErrors = errors;
+        this.events.emit('formErrors.secondStep:change', this.formErrors);
+        return Object.keys(errors).length === 0;
+    }
+
+    // isValidValue(fieldName: keyof IOrderForm, value:string) {
+    //     if(fieldName === 'email') {
+    //         // value.test(/@./)
+    //         return true
+    //     }
+    // }
 
     getProduct(): IProductItem[] {
         return this.catalog

@@ -34,16 +34,19 @@ export interface IModalData {
 
 // интерфейс описания формы заказа
 export interface IOrderForm {
+    payment: string;
+    address: string;
+}
+export interface IOrderContactForm {
     email: string;
     phone: string;
-    payment: string;
 }
 
 export interface IOrder { 
     email: string; 
     phone: string; 
     payment: string;
-    adress: string;
+    address: string;
     total: number;
     items: string[]; 
 } 

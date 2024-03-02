@@ -10,8 +10,8 @@ import {Card, CardProduct, CardBasket, ICardBasket} from "./components/Card";
 import {cloneTemplate, createElement, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import {Basket} from "./components/common/Basket";
-import {IOrderForm} from "./types";
-import {Order} from "./components/Order";
+import {IOrderForm, IOrderContactForm} from "./types";
+import {Order, OrderSubmit} from "./components/Order";
 import {Success} from "./components/common/Success";
 
 const events = new EventEmitter();
@@ -32,6 +32,8 @@ const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 //const tabsTemplate = ensureElement<HTMLTemplateElement>('#tabs');
 //const soldTemplate = ensureElement<HTMLTemplateElement>('#sold');
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
+const orderSubmitTemplate = ensureElement<HTMLTemplateElement>('#contacts');;
+
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
@@ -44,6 +46,7 @@ const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
 // Переиспользуемые части интерфейса
 //const bids = new Basket(cloneTemplate(bidsTemplate), events);
+const orderSubmit = new OrderSubmit (cloneTemplate(orderSubmitTemplate), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 // const tabs = new Tabs(cloneTemplate(tabsTemplate), {
 //     onClick: (name) => {
@@ -52,7 +55,7 @@ const basket = new Basket(cloneTemplate(basketTemplate), events);
 //     }
 // });
 const order = new Order(cloneTemplate(orderTemplate), events);
-
+// const contacts = new OrderSubmit(cloneTemplate(contactsTemplate), events)
 // Дальше идет бизнес-логика
 // Поймали событие, сделали что нужно
 
@@ -76,8 +79,71 @@ events.on<CatalogChangeEvent>('items:changed', () => {
    //page.counter = appData.getClosedLots().length;
 });
 
-// Отправлена форма заказа
+
+
+// Изменилось состояние валидации формы
+// events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
+//     const { email, phone, address } = errors;
+//     order.valid = !email && !phone && !address;
+//     order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+// });
+
+
+events.on('formErrors.firstStep:change', (errors: Partial<IOrderForm>) => {
+    const { address, payment } = errors;
+    console.log('errors: ',errors)
+    order.valid = !address && !payment;
+    order.errors = Object.values({address, payment}).filter(i => !!i).join('; ');
+});
+
+
+events.on('formErrors.secondStep:change', (errors: Partial<IOrderContactForm>) => {
+    const { email, phone } = errors;
+    console.log('errors: ',errors)
+    orderSubmit.valid = !email && !phone;
+    orderSubmit.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
+});
+
+// events.on('order.payment:change', (data: { field: keyof IOrderForm, value: string }) => {
+//     appData.order.payment = data.value
+// })
+
+// Изменилось одно из полей
+events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
+    appData.setOrderField(data.field, data.value);
+});
+events.on(/^orderSubmit\..*:change/, (data: { field: keyof IOrderContactForm, value: string }) => {
+    appData.setContactsField(data.field, data.value);
+});
+
+// Открыть форму заказа
+events.on('order:open', () => {
+    appData.order.total = appData.getTotal();
+    modal.render({
+        content: order.render({
+            payment: '',
+            address: '',
+            valid: false,
+            errors: []
+        })
+        
+    });
+});
+
 events.on('order:submit', () => {
+    modal.render({
+        content: orderSubmit.render({
+            email: '',
+            phone: '',
+            valid: false,
+            errors: []
+        })
+        
+    });
+});
+
+// Отправлена форма заказа
+events.on('contacts:submit', () => {
     api.orderProducts(appData.order)
         .then((result) => {
             const success = new Success(cloneTemplate(successTemplate), {
@@ -95,33 +161,6 @@ events.on('order:submit', () => {
         .catch(err => {
             console.error(err);
         });
-});
-
-// Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
-    const { email, phone } = errors;
-    order.valid = !email && !phone;
-    order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
-});
-
-// Изменилось одно из полей
-events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
-    appData.setOrderField(data.field, data.value);
-});
-
-// Открыть форму заказа
-events.on('order:open', () => {
-    appData.order.total = appData.getTotal();
-    modal.render({
-        content: order.render({
-            //payment: null,
-            //adress: '',
-            email: '',
-            phone: '',
-            valid: false,
-            errors: []
-        })
-    });
 });
 
 // Открыть активные лоты
