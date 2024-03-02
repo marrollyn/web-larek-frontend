@@ -26,7 +26,7 @@ export class AppState extends Model<IAppState>{
         email: '', 
         phone: '',
         payment: '',
-        adress: '',
+        address: '',
         total: 0,
         items: [] 
     } ;
@@ -51,7 +51,7 @@ export class AppState extends Model<IAppState>{
             email: '', 
             phone: '',
             payment: '',
-            adress: '',
+            address: '',
             total: 0,
             items: []
         }
@@ -74,26 +74,48 @@ export class AppState extends Model<IAppState>{
 
     setOrderField(field: keyof IOrderForm, value: string) {
         this.order[field] = value;
+        console.log('field in AppData', field, value)
 
-        if (this.validateOrder()) {
+        if (this.validateOrder(field, value)) {
             this.events.emit('order:ready', this.order);
         }
     }
 
-    validateOrder() {
+    validateOrder(field: keyof IOrderForm, value: string) {
         const errors: typeof this.formErrors = {};
-        if (!this.order.email) {
+        console.log('order:', this.order)
+        if (!this.order.email && !this.isValidValue(field, value)) {
             errors.email = 'Необходимо указать email';
         }
         if (!this.order.phone) {
             errors.phone = 'Необходимо указать телефон';
         }
-        if (!this.order.adress) {
-            errors.phone = 'Необходимо указать адрес';
+        if (!this.order.address) {
+            errors.address = 'Необходимо указать адрес';
         }
+        if (!this.order.payment) {
+            errors.payment = 'Необходимо указать тип оплаты';
+        }
+        if (!this.order.address) {
+            errors.address = 'Необходимо указать адрес';
+        }
+        console.log('validationOrder', errors)
+
         this.formErrors = errors;
-        this.events.emit('formErrors:change', this.formErrors);
+        if(field === 'address' || field === 'payment') {
+            this.events.emit('formErrors.firstStep:change', this.formErrors);
+        } else {
+            this.events.emit('formErrors.secondStep:change', this.formErrors);
+        }
+        
         return Object.keys(errors).length === 0;
+    }
+
+    isValidValue(fieldName: keyof IOrderForm, value:string) {
+        if(fieldName === 'email') {
+            // value.test(/@./)
+            return true
+        }
     }
 
     getProduct(): IProductItem[] {

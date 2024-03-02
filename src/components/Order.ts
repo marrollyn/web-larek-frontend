@@ -13,12 +13,19 @@ export class Order extends Form<IOrderForm> {
         this.button_card = container.querySelector('[name="card"]');
 
         this.button_card.addEventListener('click', (event: Event) => {
-            let payment = 'online';
+            this.onInputChange('payment', 'card');
+            // event.preventDefault();
+            // console.log(`${this.container.name}.${this.button_card.name}:change`)
+            // this.events.emit(`${this.container.name}.${this.button_card.name}:change`);
         })
         
         this.button_cash.addEventListener('click', (event: Event) => {
-            let payment = 'offline';
+            this.onInputChange('payment', 'cash');
+            // event.preventDefault();
+            // console.log(`${this.container.name}.${this.button_cash.name}:change`)
+            // this.events.emit(`${this.container.name}.${this.button_cash.name}:change`);
         })
+
     }
 
 

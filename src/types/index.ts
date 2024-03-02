@@ -37,13 +37,14 @@ export interface IOrderForm {
     email: string;
     phone: string;
     payment: string;
+    address: string;
 }
 
 export interface IOrder { 
     email: string; 
     phone: string; 
     payment: string;
-    adress: string;
+    address: string;
     total: number;
     items: string[]; 
 } 

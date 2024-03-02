@@ -76,6 +76,7 @@ events.on<CatalogChangeEvent>('items:changed', () => {
    //page.counter = appData.getClosedLots().length;
 });
 
+
 // Отправлена форма заказа
 events.on('order:submit', () => {
     api.orderProducts(appData.order)
@@ -98,11 +99,34 @@ events.on('order:submit', () => {
 });
 
 // Изменилось состояние валидации формы
-events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
-    const { email, phone } = errors;
-    order.valid = !email && !phone;
-    order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+// events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
+//     const { email, phone, address } = errors;
+//     order.valid = !email && !phone && !address;
+//     order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+// });
+
+
+events.on('formErrors.firstStep:change', (errors: Partial<IOrderForm>) => {
+    console.log('payment and address')
+    const { address, payment } = errors;
+    console.log('errors: ',errors)
+    order.valid = !address && !payment;
+    order.errors = Object.values({address, payment}).filter(i => !!i).join('; ');
 });
+
+
+events.on('formErrors.secondStep:change', (errors: Partial<IOrderForm>) => {
+    const { email, phone } = errors;
+    console.log('errors: ',errors)
+    order.valid = !email && !phone;
+    order.errors = Object.values({email, phone}).filter(i => !!i).join('; ');
+});
+
+events.on('order.payment:change', (data: { field: keyof IOrderForm, value: string }) => {
+    appData.order.payment = data.value
+})
+
+
 
 // Изменилось одно из полей
 events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }) => {
@@ -112,6 +136,7 @@ events.on(/^order\..*:change/, (data: { field: keyof IOrderForm, value: string }
 // Открыть форму заказа
 events.on('order:open', () => {
     appData.order.total = appData.getTotal();
+    console.log('order:open')
     modal.render({
         content: order.render({
             //payment: null,
